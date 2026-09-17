@@ -1,69 +1,89 @@
 # Alex Reifer — Projects
 
-Five things I've built, newest first. Private for now — happy to walk through
-any of these live.
+Five things I've built, explained plainly — what each one does, what data
+it runs on, and what the actual numbers are. Private for now.
 
 ---
 
-## omniroute-test — real-time futures execution engine
+## omniroute-test — automated futures trading system
 
-A risk-gated order-execution system for a funded futures account (MES/NQ,
-TopstepX). The interesting engineering problem wasn't the strategy — it was
-making sure a bad fill or a stale price *can't* place a bad order:
+**What it is:** a program that watches the market and automatically buys and
+sells small S&P 500 / Nasdaq futures contracts (MES/MNQ) on a funded trading
+account, following one fixed set of rules — no gut decisions, no
+overriding it mid-trade.
 
-- **Risk engine**: hard per-trade risk cap, daily-loss lockout, consecutive-loss
-  lockout, and a kill switch, all independent of whatever the strategy says.
-- **Price-tolerance firewall**: every incoming signal is re-validated against
-  a live quote before it can become an order; anything outside tolerance is
-  rejected, logged, and never silently retried.
-- **Real-time data**: found and implemented a SignalR WebSocket feed
-  (a broker capability that wasn't documented anywhere obvious) after the
-  REST polling approach proved too laggy for the tolerance check — persistent
-  connection, automatic reconnect with backoff.
-- **117 passing tests**, including end-to-end webhook → risk-engine → broker
-  flows.
+**What data it uses:** to build and test it, I used 6 months of real,
+minute-by-minute historical price data (about 190,000 individual price bars,
+from a market-data provider called Databento). Once running for real, it
+also connects to the broker's live price feed so it always knows the
+current price before it acts.
 
-No live order has ever been placed by this system — every dangerous step
-(flipping a broker connector live, wiring a real alert to the webhook) is
-gated behind an explicit, deliberate human action, on purpose.
+**The result, in plain terms:** before ever risking real money, I tested
+the rules against those 6 months of real price history — the *first* 70%
+of it to tune the rules, then the *remaining, untouched* 30% to check it
+still worked on data it hadn't seen (this second check is the important
+one — it's the difference between "looks good because I tuned it to look
+good" and "actually holds up"). Risking $500 per trade on a simulated
+$50,000 account: it made about **$4,946 on the tuning data and $2,106 on
+the untouched data** — roughly **14% over the ~8 months tested**, and it
+held up on both halves instead of just the one it was fitted to.
 
-*Stack: Python, FastAPI, asyncio, pytest.*
-
----
-
-## overnight-pressure — systematic equities research
-
-Signal research and backtesting from first principles, on a self-imposed
-$100 capital / $0 data-budget constraint. The headline result: a
-cross-sectional reversal signal with real out-of-sample statistics
-(IC 0.0137, t=5.11 across 500 names, 2016–2026), combined with a second,
-near-uncorrelated signal (post-earnings drift) into one book.
-
-What I'm proudest of isn't the return number — it's the discipline around
-it: every tested idea that *didn't* work is kept in the record instead of
-deleted, and every headline result gets an honest counter-check (e.g. a
-beta-hedge test showing half the earnings sleeve's raw return was just
-market beta, not signal, and saying so plainly).
-
-*Stack: Python, pandas, walk-forward backtesting, Alpaca paper API.*
+**Important honesty:** that's a backtest, not real trading — no real order
+has been placed with this system yet. Past performance on historical data
+doesn't guarantee anything about the future; it just means the idea
+survived a fair test instead of just looking good on paper.
 
 ---
 
-## daytrader-bot — Alpaca paper-trading bot
+## overnight-pressure — systematic stock strategy research
 
-An earlier, smaller execution bot — moving-average crossover strategy,
-position sizing and stop-loss as a percent of equity, daily-loss circuit
-breaker. The precursor to the risk-engine design used in the two projects
-above.
+**What it is:** research into *which* stocks to hold overnight, based on
+the finding that almost all of the stock market's long-term gain happens
+between the close and the next day's open — not during the trading day
+itself.
 
-*Stack: Python, Alpaca paper API.*
+**What data it uses:** 10 years (2016–2026) of daily price data across the
+500 largest US stocks.
+
+**The result, in plain terms:** picking stocks with this method and
+holding them overnight beat just holding the market by about **8.9% per
+year** (measured with real statistics, not a lucky-looking chart — the
+signal held up with high statistical confidence across 500 stocks over 10
+years). Adding a second, unrelated strategy — buying stocks right after a
+strong earnings report — pushed the combined result to about **15% per
+year** in testing. Being honest about that second number: roughly half of
+the earnings strategy's extra return is just "the market was going up,"
+not real skill, so a realistic estimate is closer to **14–15%/year**, not
+the full 15.1% headline. It's running with a small amount of real money
+now ($100 growing toward $400), with the same "don't lie to yourself"
+principle: every idea that got tested and *didn't* work is kept in the
+project's notes, not deleted.
 
 ---
 
-## life-planner — multi-user planning app
+## daytrader-bot — early trading bot (Alpaca paper account)
 
-A full-stack life-planning web app: auth, multi-user data isolation, and a
-real deployed backend.
+**What it is:** the first version of an automated trading bot — a simple
+moving-average strategy with position sizing and a stop-loss, all running
+against a paper (fake-money) Alpaca brokerage account.
+
+**What data it uses:** live paper-account price data from Alpaca — nothing
+historical here, this one was about proving the mechanics work, not
+optimizing returns.
+
+This is the project that led directly to the risk-management approach used
+in `omniroute-test` above.
+
+---
+
+## life-planner — full life-planning web app
+
+**What it is:** a web app for planning and tracking day-to-day life —
+built to support multiple separate users, each with their own private
+data.
+
+**What data it uses:** a real hosted database (Supabase/Postgres) storing
+each user's own planning data, kept isolated per account.
 
 *Stack: Next.js, TypeScript, Supabase.*
 
@@ -71,7 +91,10 @@ real deployed backend.
 
 ## recomp-planner-legacy — body recomposition tracker
 
-A self-contained single-file planning tool with Google Calendar
-integration for scheduling.
+**What it is:** a single self-contained tool for planning and tracking
+body-recomposition progress (weight/strength goals over time).
+
+**What data it uses:** connects to Google Calendar to schedule check-ins
+and reminders directly on your calendar.
 
 *Stack: HTML/CSS/JS, Google Calendar API.*
