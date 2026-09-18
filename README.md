@@ -174,6 +174,19 @@ $50,000 account). Not just pick a strategy that looks good, but actually
 solve the harder problem underneath it: making sure the *system* can't
 hurt itself, even if a signal is wrong or the price data lies to it.
 
+**The logic, in plain terms:** trade the New York morning session on
+S&P 500 and Nasdaq futures. Wait for price to sweep a key liquidity
+level, the prior day's high or low, since that's where a lot of stop
+orders cluster. A sweep alone is a common false signal, so the system
+also requires a Fair Value Gap to confirm a real shift in direction
+before it actually enters.
+
+**The math:** the stop is tight, about 4 times the recent average true
+range, against a target 5 times that distance. With that kind of payoff
+shape, the strategy does not need to win most of its trades. It needs
+the wins, when they come, to be big enough to cover a string of small,
+controlled losses along the way.
+
 **What I did, step by step:**
 1. Picked a strategy (a liquidity sweep and reversal setup on S&P 500
    and Nasdaq futures) and tested it against 6 months of real, minute by
@@ -223,8 +236,14 @@ constraint of $0 to spend on data.
    holding overnight, based on a statistical model of price movement,
    and tested it against 10 years of real daily data (2016 to 2026).
 3. Found a second, mostly unrelated idea, buying stocks right after a
-   strong earnings report, and tested whether combining the two made
-   things better or just added noise.
+   strong earnings report, a well documented pattern called
+   post earnings announcement drift, where the market takes days or
+   weeks to fully price in a big surprise. On its own that signal
+   catches some false starts, so I added a filter: only take the
+   earnings gap if the stock is also in the top 20% of 12 month minus
+   1 month momentum that same day. Requiring both together, the
+   earnings surprise and the broader trend, tested meaningfully better
+   than either signal alone.
 4. For every idea that didn't hold up (and there were several), kept it
    written down in the project instead of deleting it, specifically so
    the good numbers below aren't quietly cherry picked from a pile of
