@@ -1,7 +1,48 @@
 # Alex Reifer — Projects
 
-Six things I've built. For each one: why I started it, what I actually did,
-and what happened. Private for now.
+Seven things I've built. For each one: why I started it, what I actually
+did, and what happened. Private for now.
+
+---
+
+## alumni-network — collegiate alumni networking app (in progress)
+
+**Why I built it:** LinkedIn is built for the whole world, which makes it
+useless for the connections that actually matter most to a student — alumni
+from your exact major, or your specific fraternity, sorority, or club. I
+wanted to turn "cold outreach to a stranger" into "warm intro to someone
+who shares real, verified history with you."
+
+**What I did, step by step:**
+1. Designed the trust layer first: students verify instantly with their
+   `.edu` email; alumni verify their identity via LinkedIn, but I caught
+   early that LinkedIn's API doesn't actually expose education history —
+   so alumni claims are self-reported and shown honestly as such (a
+   "self-reported" badge) until a real person — a current officer of that
+   org — vouches for them, at which point it upgrades to "verified."
+2. Built the vouching system and a single-use invite loop so a verified
+   alumnus can pull in people they actually know from their own chapter —
+   the real growth mechanism, not a cold campus-wide launch.
+3. Solved the two hardest engineering problems for real, not just on paper:
+   a **time-capped coffee-chat scheduler** where claiming an alumnus's last
+   monthly slot is race-safe via a database-level row lock (two students
+   clicking at the same millisecond can't both win), and an **AI warm-intro
+   drafter** where the model only ever sees shared facts computed
+   server-side from real database joins — it's structurally incapable of
+   inventing a connection that isn't real.
+4. Deliberately did **not** build the cash-referral-bounty version of the
+   idea — matching alumni to a paid corporate referral bonus through the
+   app edges into employment-agency licensing and money-transmission
+   regulations. Kept the discovery/intro value without turning the app
+   into a financial intermediary.
+
+**What happened:** it's a real, buildable app — 11 working pages/routes,
+full Postgres schema with row-level security, `npm run build` passing
+clean — not a mockup. Still missing the parts that need external accounts
+I don't control from here (a live Supabase project, LinkedIn OAuth app,
+Anthropic API key, Vercel deploy), so it hasn't been exercised end-to-end
+against real data yet — the architecture and the two hard problems are
+solved, the plumbing to go live is what's left.
 
 ---
 
