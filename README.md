@@ -1,7 +1,85 @@
 # Alex Reifer — Projects
 
-Seven things I've built. For each one: why I started it, what I actually
+Eight things I've built. For each one: why I started it, what I actually
 did, and what happened. Private for now.
+
+---
+
+## RegimeShield — portfolio risk & behavioral diversification engine
+
+**Why I built it:** every portfolio tool I'd seen assumes an emotionless
+investor who calmly holds through a −50% drawdown. Real people don't —
+Morningstar's own "Mind the Gap" research puts the real-world cost of
+panic-selling at market bottoms and re-entering late at 1.0–1.5% of
+return per year, every year, compounding. I wanted to quantify that cost
+directly instead of treating diversification as just a math exercise.
+
+**The core idea, in plain wealth-management terms:** the real value of
+holding an uncorrelated "ballast" sleeve in a portfolio isn't that it
+mathematically lowers variance — it's that a *smaller* drawdown never
+crosses the psychological point where a real investor gives up and sells.
+Model it out: an unhedged portfolio might drop 48% and take 4 years to
+recover — fine, if you actually hold on. But if that same investor panics
+and sells at −30%, they lock in the loss and the real recovery stretches
+past 9 years once you account for re-entering late. Add a ballast sleeve
+that caps the drawdown around −28% — never triggering the panic point at
+all — and the recovery drops back to about 3 years. The insurance isn't
+the math, it's keeping the investor in their seat.
+
+**On alpha vs. beta, plainly:** this is deliberately a **risk** tool, not
+an **alpha** tool — it doesn't try to pick winning stocks or time the
+market, and I want to be direct about that distinction rather than blur
+it. What it does measure carefully is **beta** — not just market beta,
+but a full decomposition of every holding onto 8 real macro risk factors
+(market, size, value, momentum, term premium, credit spread, commodities,
+dollar strength), so a stress test against a real historical crisis is
+grounded in actual factor exposure instead of a guess. The "edge" this
+tool claims is entirely behavioral: it doesn't promise better returns
+from security selection, it quantifies how much return a real investor
+keeps by not blowing themselves up emotionally — a genuinely different,
+and I think more honest, kind of value proposition than most retail
+portfolio tools make.
+
+**What I did, technically:**
+1. **Effective Number of Bets** (Meucci, 2009): a naive holdings count
+   overstates diversification — ten tech stocks "count" as ten positions
+   while the real economic risk sits in one dimension. This decomposes
+   the correlation matrix's eigenvalues and reports diversification as
+   spectral entropy across them, with exact boundary cases (perfect
+   collinearity → 1.0, perfect independence → N) locked down as tests.
+2. **Random Matrix Theory denoising** (Laloux, Cizeau, Bouchaud & Potters,
+   1999): on any finite daily-return window, part of the correlation
+   signal is just sampling noise, not a real risk factor. Eigenvalues
+   below the theoretical noise boundary get replaced before the
+   diversification score is computed, with a bootstrapped confidence
+   interval attached — so the tool never lets a decimal-point difference
+   get over-read as a real signal.
+3. **Factor-mapped historical stress testing**, honest about assets that
+   didn't exist yet during a given crisis: rather than inventing 2008-era
+   prices for a fund launched in 2019 (a real look-ahead bias trap),
+   holdings are stress-tested through their actual factor betas against
+   long-history benchmarks, with each modern ticker's real launch date
+   disclosed in the output.
+4. **Behavioral capitulation model**: simulates a real investor who
+   liquidates at a chosen drawdown threshold and re-enters only after a
+   real recovery has already started — quantifying the exact return
+   penalty a smaller, well-placed ballast sleeve avoids.
+
+**What happened:** the assumptions doc names its own weak points
+directly rather than hiding them in fine print (factor loadings assumed
+stable even though real crises break that; diversification score is
+basis-dependent, addressed by always showing the confidence interval, not
+a bare number). Tested against a real ~20-position portfolio, not a demo
+— and in that process, found and fixed two real bugs: the core analysis
+was silently falling back to one fixed synthetic-data random walk for
+most real holdings while displaying a specific-looking score with no
+visible warning, and a separate tool was hardcoding a 50/30/20 account
+split and never actually checking whether a recommendation fit an
+investor's real account capacity. Both fixed and verified against live
+market data pulled fresh for the actual holdings involved.
+
+*Stack: Python, FastAPI, HTML/Chart.js, pytest — built with Google's
+Antigravity (Gemini-based), the one project here not built with Claude.*
 
 ---
 
