@@ -1,13 +1,11 @@
 # Alex Reifer, Projects
 
 Eight things I've built. For each one: why I started it, what I actually
-did, and what happened. Most of the actual code stays private, a couple
-of these touch a real trading account or personal financial data, so
-this file is the honest summary either way. `alumni-network` is the one
-exception, live and public at
-[github.com/reifer112-art/alumni-network](https://github.com/reifer112-art/alumni-network)
-and running at [branchdin.com](https://www.branchdin.com), if you want
-to see real working code instead of just a writeup.
+did, and what happened. The code stays private, a couple of these touch
+a real trading account or personal financial data, so this file is the
+honest summary instead. `alumni-network` is actually live and running
+at [branchdin.com](https://www.branchdin.com) if you want to see one of
+these working in the real world rather than just read about it.
 
 ---
 
@@ -92,7 +90,7 @@ Antigravity (Gemini based), the one project here not built with Claude.*
 
 ---
 
-## alumni-network: collegiate alumni networking app (live, public repo)
+## alumni-network: collegiate alumni networking app (live at branchdin.com)
 
 **Why I built it:** LinkedIn is built for the whole world, which makes
 it useless for the connections that actually matter most to a student:
@@ -131,9 +129,8 @@ first real alumnus onto a two sided network when the alumni side starts
 empty. Rather than assume that away, I built directly for it, a way for
 a student to send a specific alumnus a real, personal invite email, and
 a claimable placeholder profile system so the directory has real names
-in it before those people have signed up. This is the one project here
-with the actual code public, not just this writeup, since it's the most
-complete and the safest to share.
+in it before those people have signed up. See it running at
+[branchdin.com](https://www.branchdin.com).
 
 ---
 
