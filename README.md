@@ -1,7 +1,13 @@
 # Alex Reifer, Projects
 
 Eight things I've built. For each one: why I started it, what I actually
-did, and what happened. Private for now.
+did, and what happened. Most of the actual code stays private, a couple
+of these touch a real trading account or personal financial data, so
+this file is the honest summary either way. `alumni-network` is the one
+exception, live and public at
+[github.com/reifer112-art/alumni-network](https://github.com/reifer112-art/alumni-network)
+and running at [branchdin.com](https://www.branchdin.com), if you want
+to see real working code instead of just a writeup.
 
 ---
 
@@ -86,7 +92,7 @@ Antigravity (Gemini based), the one project here not built with Claude.*
 
 ---
 
-## alumni-network: collegiate alumni networking app (in progress)
+## alumni-network: collegiate alumni networking app (live, public repo)
 
 **Why I built it:** LinkedIn is built for the whole world, which makes
 it useless for the connections that actually matter most to a student:
@@ -117,14 +123,17 @@ someone who shares real, verified history with you."
    regulations. Kept the discovery and intro value without turning the
    app into a financial intermediary.
 
-**What happened:** it's a real, buildable app, 11 working pages and
-routes, full Postgres schema with row level security, `npm run build`
-passing clean, not a mockup. Still missing the parts that need external
-accounts I don't control from here (a live Supabase project, a LinkedIn
-OAuth app, an Anthropic API key, a Vercel deploy), so it hasn't been
-exercised from start to finish against real data yet. The architecture
-and the two hard problems are solved. The plumbing to go live is what's
-left.
+**What happened:** it's live in production at branchdin.com, a real
+domain, with real students using it: real orgs, real coffee chats booked
+onto real calendars, real messages sent. The harder problem turned out
+to be the one no amount of code review would have caught: getting the
+first real alumnus onto a two sided network when the alumni side starts
+empty. Rather than assume that away, I built directly for it, a way for
+a student to send a specific alumnus a real, personal invite email, and
+a claimable placeholder profile system so the directory has real names
+in it before those people have signed up. This is the one project here
+with the actual code public, not just this writeup, since it's the most
+complete and the safest to share.
 
 ---
 
